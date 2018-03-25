@@ -1,6 +1,6 @@
 # UDACITY PROJECT 2
 
-# dog-breed-classifier
+# Dog Breed Classifier
 
 A classifier that predicts the dog breed given the image of a dog. However if you give an image of a human then it will predict the closest looking breed of dog to that image. 
 
