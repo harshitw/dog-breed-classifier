@@ -158,7 +158,7 @@ test_tensors = paths_to_tensor(test_files).astype('float32')/255
 # Model Architecture
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, GlobalAveragePooling2D
-from keras.layers import Flatten, Dense, Dropout
+from keras.layers import Flatten, Dense, Dropout, Activation
 from keras.layers.normalization import BatchNormalization
 
 model = Sequential()
@@ -179,7 +179,7 @@ model.add(BatchNormalization(axis = 3, scale = False))
 model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size = (4, 4), strides = (2, 2), padding = 'same'))
 
-model.add(GlobalAveragePooling2D(input_shape = ))
+model.add(GlobalAveragePooling2D())
 model.add(Dense(133, activation = 'softmax'))
 
 model.summary()
@@ -255,6 +255,7 @@ def VGG16_predict_breed(img_path):
     # return dog breed that is predicted by the model
     return dog_names[np.argmax(predicted_vector)]
 
+ResNet50_predict_breed('dogImages/test/022.Belgian_tervuren/Belgian_tervuren_01588.jpg')
 
 # CNN to classify dog breed using transfer learning with ResNet50 bottleneck features
 
@@ -297,3 +298,37 @@ def ResNet50_predict_breed(img_path):
     predicted_vector = ResNet50_model.predict(bottleneck_feature)
     # return dog breed that is predicted by the model
     return dog_names[np.argmax(predicted_vector)]
+
+def dog_detector(img_path):
+    prediction = ResNet50_predict_labels(img_path)
+    return ((prediction <= 268) & (prediction >= 151)) 
+
+def face_detector(img_path):
+    img = cv2.imread(img_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray)
+    return len(faces) > 0
+
+def predict_breed(img_path):
+    isDog = dog_detector(img_path)
+    isPerson = face_detector(img_path)
+    if isDog:
+        print("Detected a dog")
+        breed = ResNet50_predict_breed(img_path)
+        return breed
+    if isPerson:
+        print("Detected a human face")
+        breed = ResNet50_predict_breed(img_path)
+        return breed
+    else:
+        print("No human face or dog detected")
+        img = cv2.imread(img_path)
+        cv_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        imgplot = plt.imshow(cv_rgb)
+     
+predict_breed('images/beast1.jpeg')
+
+predict_breed('images/IMG_0867.jpg')
+
+
+  
